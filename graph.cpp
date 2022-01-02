@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+#include <fstream>
 #include <ctime>
 #include "graph.h"
 
@@ -20,31 +21,28 @@ Graph::Graph(int size, TypeGraph t) {
     }
 };
 
-void Graph::printd() {
-    cout << "массив потенциалов d:" << '\n';
-    for (int i : d) {
-        cout << i << " ";
+void Graph::printVec(vector<int> vec) {
+    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    for (int i : vec) {
+        out << i << " ";
     }
-    cout << '\n' << "---------------------------" << '\n';
+    out << '\n';
+    out.close();
 }
 
 void Graph::printMatrix() {
-    cout << "матрица смежности matrix:" << '\n';
+    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    out << "матрица смежности matrix:" << '\n';
     for (auto & i : matrix) {
         for (int j = 0; j < matrix.size(); j++) {
-            cout << i[j] << " ";
+            out << i[j] << " ";
         }
-        cout << '\n';
+        out << '\n';
     }
-    cout << "---------------------------" << '\n';
-    cout << "количество ребер: " << numberEdges << '\n';
-    cout << "---------------------------" << '\n';
-}
-
-void Graph::printE() {
-    cout << "e: ";
-    for (int i : e) cout << i << ' ';
-    cout << '\n' << "---------------------------" << '\n';
+    out << "---------------------------" << '\n';
+    out << "количество ребер: " << numberEdges << '\n';
+    out << "---------------------------" << '\n';
+    out.close();
 }
 
 void Graph::countd () {
@@ -64,7 +62,6 @@ void Graph::countd () {
     for (int & i : d) {
         i /= 2;
     }
-    printd();
 }
 
 vector<int> Graph::countd (vector<int> newE) {
@@ -82,12 +79,9 @@ vector<int> Graph::countd (vector<int> newE) {
             }
         }
     }
-    cout << "массив потенциалов: ";
     for (int & i : ans) {
         i /= 2;
-        cout << i << ' ';
     }
-    cout << '\n';
     return ans;
 }
 
@@ -98,8 +92,6 @@ void Graph::countD () {
     for (int i : d) {
         D += i;
     }
-    cout << "значение потенциала D: " << D << '\n';
-    cout << "---------------------------" << '\n';
 }
 
 int Graph::countD (vector<int> newE) {
@@ -141,28 +133,67 @@ void Graph::createKnn () {
     printMatrix();
 };
 
-void Graph::RLS () {
-    //srand(static_cast<unsigned int>(time(0)));
-    int pos = rand() % n;
+void Graph::RLS (int iteration) {
+    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    out << "---------------------------\n";
+    out << "iteration " << iteration << '\n';
+    int pos = rand() % this->n;
 
-    cout << "flip " << pos << '\n';
+    out << "flip " << pos << '\n';
+    out << "prev e: ";
+    for (int i : this->e) {
+        out << i << " ";
+    }
+    out << '\n';
 
-    vector<int> newE = e;
+    vector<int> newE;
+    newE.insert(newE.begin(), this->e.begin(), this->e.end());
     newE[pos] = (newE[pos] + 1) % 2;
-    printE();
+
+    out << "new e:  ";
+    for (int i : newE) {
+        out << i << " ";
+    }
+    out << '\n';
 
     int newD = countD(newE);
 
-    if (newD < D) {
-        e = newE;
-        countd();
-        countD();
+    out << "предыдущий массив потенциалов: ";
+    for (int i : this->d) {
+        out << i << " ";
+    }
+    out << '\n';
+
+    vector<int> newd = countd(newE);
+    out << "новый массив потенциалов: ";
+
+    for (int i : newd) {
+        out << i << " ";
+    }
+    out << '\n';
+
+    out << "старый потенциал = " << this->D << "\nпосле флипа = " << newD << '\n';
+
+    if (newD <= this->D) {
+        this->e = newE;
+        this->d = countd(newE);
+        this->D = countD(newE);
+        out << "good mutation\n";
     }
 
-    if (D > 0) {
-        RLS();
+    if (this->D > 0) {
+        iteration++;
+        out.close();
+        RLS(iteration);
     } else {
-        cout << "разрезана половина ребер" << '\n';
+        out << "---------------------------\n";
+        out << "(" << this->n << ", " << this->type << ")\n";
+        out << "разрезана половина ребер за " << iteration << " итераций\n";
+        out << "---------------------------\n";
     }
+}
+
+void Graph::onePlusOneAlgorithm(int iteration){
+    
 }
 

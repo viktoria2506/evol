@@ -35,13 +35,13 @@ public:
     void createKn();
     void createKnn();
     void createRandom();
-    void printd();
-    void printMatrix();
-    void printE();
 
-    void RLS();
+    void printMatrix();
+    void printVec(vector<int> vec);
+
+    void RLS(int iteration);
     void lambdaAlgorithm();
-    void onePlusOneAlgorithm();
+    void onePlusOneAlgorithm(int iteration);
 };
 
 #endif //EVOL_GRAPH_H

@@ -20,10 +20,10 @@ int main() {
     Graph g_128_kn(128, KN);
     g_128_kn.RLS(1);
 
-    Graph g_256_kn(128, KN);
+    Graph g_256_kn(256, KN);
     g_256_kn.RLS(1);
 
-    Graph g_512_kn(128, KN);
+    Graph g_512_kn(512, KN);
     g_512_kn.RLS(1);
 
     Graph g_32_knn(32, KNN);
@@ -35,10 +35,10 @@ int main() {
     Graph g_128_knn(128, KNN);
     g_128_knn.RLS(1);
 
-    Graph g_256_knn(128, KNN);
+    Graph g_256_knn(256, KNN);
     g_256_knn.RLS(1);
 
-    Graph g_512_knn(128, KNN);
+    Graph g_512_knn(512, KNN);
     g_512_knn.RLS(1);
     return 0;
 }

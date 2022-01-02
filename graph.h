@@ -28,9 +28,15 @@ public:
 
     Graph(int size, TypeGraph t);
 
-    void countd();
+    void setVecD(vector<int> nd);
+    void setD(int nD);
+    void setE(vector<int> ne);
+
+    vector<int> getVecD();
+    int getD();
+    vector<int> getE();
+
     vector<int> countd(vector<int> e);
-    void countD();
     int countD(vector<int> e);
     void createKn();
     void createKnn();

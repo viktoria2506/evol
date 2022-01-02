@@ -21,6 +21,26 @@ Graph::Graph(int size, TypeGraph t) {
     }
 };
 
+void Graph::setVecD(vector<int> nd) {
+    d = move(nd);
+};
+void Graph::setD(int nD) {
+    D = nD;
+};
+void Graph::setE(vector<int> ne) {
+    e = move(ne);
+};
+
+vector<int> Graph::getVecD() {
+    return d;
+};
+int Graph::getD(){
+    return D;
+};
+vector<int> Graph::getE(){
+    return e;
+};
+
 void Graph::printVec(vector<int> vec) {
     ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
     for (int i : vec) {
@@ -32,7 +52,7 @@ void Graph::printVec(vector<int> vec) {
 
 void Graph::printMatrix() {
     ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
-    out << "матрица смежности matrix:" << '\n';
+    out << "количество вершин " << matrix.size() << '\n' << "матрица смежности matrix:" << '\n';
     for (auto & i : matrix) {
         for (int j = 0; j < matrix.size(); j++) {
             out << i[j] << " ";
@@ -43,25 +63,6 @@ void Graph::printMatrix() {
     out << "количество ребер: " << numberEdges << '\n';
     out << "---------------------------" << '\n';
     out.close();
-}
-
-void Graph::countd () {
-    for(int i = 0; i < matrix.size(); i++) {
-        for(int j = 0; j < matrix.size(); j++) {
-            if(matrix[i][j] == 1) {
-                if(e[i] == e[j]) {
-                    d[i]++;
-                    d[j]++;
-                } else {
-                    d[i]--;
-                    d[j]--;
-                }
-            }
-        }
-    }
-    for (int & i : d) {
-        i /= 2;
-    }
 }
 
 vector<int> Graph::countd (vector<int> newE) {
@@ -83,15 +84,6 @@ vector<int> Graph::countd (vector<int> newE) {
         i /= 2;
     }
     return ans;
-}
-
-
-void Graph::countD () {
-    countd();
-    D = 0;
-    for (int i : d) {
-        D += i;
-    }
 }
 
 int Graph::countD (vector<int> newE) {
@@ -117,6 +109,9 @@ void Graph::createKn () {
         }
     }
     numberEdges /= 2;
+    setVecD(countd(getE()));
+    setD(countD(getE()));
+
     printMatrix();
 };
 
@@ -130,6 +125,9 @@ void Graph::createKnn () {
             numberEdges++;
         }
     }
+
+    setVecD(countd(getE()));
+    setD(countD(getE()));
     printMatrix();
 };
 
@@ -141,13 +139,12 @@ void Graph::RLS (int iteration) {
 
     out << "flip " << pos << '\n';
     out << "prev e: ";
-    for (int i : this->e) {
+    for (int i : getE()) {
         out << i << " ";
     }
     out << '\n';
 
-    vector<int> newE;
-    newE.insert(newE.begin(), this->e.begin(), this->e.end());
+    vector<int> newE = getE();
     newE[pos] = (newE[pos] + 1) % 2;
 
     out << "new e:  ";
@@ -159,7 +156,7 @@ void Graph::RLS (int iteration) {
     int newD = countD(newE);
 
     out << "предыдущий массив потенциалов: ";
-    for (int i : this->d) {
+    for (int i : getVecD()) {
         out << i << " ";
     }
     out << '\n';
@@ -172,16 +169,16 @@ void Graph::RLS (int iteration) {
     }
     out << '\n';
 
-    out << "старый потенциал = " << this->D << "\nпосле флипа = " << newD << '\n';
+    out << "старый потенциал = " << getD() << "\nпосле флипа = " << newD << '\n';
 
-    if (newD <= this->D) {
-        this->e = newE;
-        this->d = countd(newE);
-        this->D = countD(newE);
+    if (newD <= getD()) {
+        setE(newE);
+        setVecD(countd(newE));
+        setD(countD(newE));
         out << "good mutation\n";
     }
 
-    if (this->D > 0) {
+    if (getD() > 0) {
         iteration++;
         out.close();
         RLS(iteration);

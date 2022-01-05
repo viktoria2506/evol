@@ -18,6 +18,8 @@ Graph::Graph(int size, TypeGraph t) {
         createKn();
     } else if (type == KNN) {
         createKnn();
+    } else if (type == RANDOM) {
+        createRandom();
     }
 };
 
@@ -130,6 +132,23 @@ void Graph::createKnn () {
     setD(countD(getE()));
     //printMatrix();
 };
+
+void Graph::createRandom () {
+    matrix = vector< vector <int> >(n, vector<int> (n, 0));
+
+    for (int i = 0; i < n; i++) {
+        for (int j = i+1; j < n; j++) {
+                int randEdge = rand() % 2;
+                matrix[i][j] = randEdge;
+                matrix[j][i] = randEdge;
+                if (randEdge == 1) numberEdges++;
+        }
+    }
+
+    setVecD(countd(getE()));
+    setD(countD(getE()));
+    //printMatrix();
+}
 
 void Graph::RLS (int iteration) {
     ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);

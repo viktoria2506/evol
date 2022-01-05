@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <ctime>
 #include <stdlib.h>
 #include "graph.h"
 
@@ -11,20 +12,34 @@ int main() {
     out.open("/Users/viktoria/CLionProjects/evol/out");
     out << "";
 
-    Graph g_32_kn(32, KN);
-    g_32_kn.RLS(1);
+    unsigned int start_time =  clock();
+    auto *g_32_kn = new Graph(32, KN);
+    g_32_kn->RLS(1);
+    delete g_32_kn;
 
-    Graph g_64_kn(64, KN);
-    g_64_kn.RLS(1);
+    auto *g_64_kn = new Graph(64, KN);
+    g_64_kn->RLS(1);
+    delete g_64_kn;
 
-    Graph g_128_kn(128, KN);
-    g_128_kn.RLS(1);
+    auto g_128_kn = new Graph(128, KN);
+    g_128_kn->RLS(1);
+    delete g_128_kn;
 
-    Graph g_256_kn(256, KN);
-    g_256_kn.RLS(1);
+    auto g_256_kn = new Graph(256, KN);
+    g_256_kn->RLS(1);
+    delete g_256_kn;
 
-    Graph g_512_kn(512, KN);
-    g_512_kn.RLS(1);
+    auto *g_512_kn = new Graph(512, KN);
+    g_512_kn->RLS(1);
+    delete g_512_kn;
+
+    auto g_1024_kn = new Graph(1024, KN);
+    g_1024_kn->RLS(1);
+    delete g_1024_kn;
+
+    auto g_2048_kn = new Graph(2048, KN);
+    g_2048_kn->RLS(1);
+    delete g_2048_kn;
 
     Graph g_32_knn(32, KNN);
     g_32_knn.RLS(1);
@@ -40,5 +55,17 @@ int main() {
 
     Graph g_512_knn(512, KNN);
     g_512_knn.RLS(1);
+
+    Graph g_1024_knn(1024, KNN);
+    g_1024_knn.RLS(1);
+
+    Graph g_2048_knn(2048, KNN);
+    g_2048_knn.RLS(1);
+
+    unsigned int end_time = clock();
+    unsigned int dur = end_time - start_time;
+
+    out.open("/Users/viktoria/CLionProjects/evol/out");
+    out << dur;
     return 0;
 }

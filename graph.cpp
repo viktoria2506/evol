@@ -24,7 +24,7 @@ Graph::Graph(int size, TypeGraph t) {
 void Graph::setVecD(vector<int> nd) {
     d = move(nd);
 };
-void Graph::setD(int nD) {
+void Graph::setD(long long nD) {
     D = nD;
 };
 void Graph::setE(vector<int> ne) {
@@ -34,7 +34,7 @@ void Graph::setE(vector<int> ne) {
 vector<int> Graph::getVecD() {
     return d;
 };
-int Graph::getD(){
+long long Graph::getD(){
     return D;
 };
 vector<int> Graph::getE(){
@@ -86,9 +86,9 @@ vector<int> Graph::countd (vector<int> newE) {
     return ans;
 }
 
-int Graph::countD (vector<int> newE) {
+long long Graph::countD (vector<int> newE) {
     vector<int> newd;
-    int ans = 0;
+    long long ans = 0;
     newd = countd(newE);
 
     for (int i : newd) {
@@ -112,7 +112,7 @@ void Graph::createKn () {
     setVecD(countd(getE()));
     setD(countD(getE()));
 
-    printMatrix();
+    //printMatrix();
 };
 
 void Graph::createKnn () {
@@ -128,7 +128,7 @@ void Graph::createKnn () {
 
     setVecD(countd(getE()));
     setD(countD(getE()));
-    printMatrix();
+    //printMatrix();
 };
 
 void Graph::RLS (int iteration) {
@@ -138,36 +138,36 @@ void Graph::RLS (int iteration) {
     int pos = rand() % this->n;
 
     out << "flip " << pos << '\n';
-    out << "prev e: ";
+    /*out << "prev e: ";
     for (int i : getE()) {
         out << i << " ";
     }
-    out << '\n';
+    out << '\n';*/
 
     vector<int> newE = getE();
     newE[pos] = (newE[pos] + 1) % 2;
 
-    out << "new e:  ";
-    for (int i : newE) {
+    //out << "new e:  ";
+    /*for (int i : newE) {
         out << i << " ";
     }
-    out << '\n';
+    out << '\n';*/
 
-    int newD = countD(newE);
+    long long newD = countD(newE);
 
-    out << "предыдущий массив потенциалов: ";
-    for (int i : getVecD()) {
+    //out << "предыдущий массив потенциалов: ";
+    /*for (int i : getVecD()) {
         out << i << " ";
     }
-    out << '\n';
+    out << '\n';*/
 
     vector<int> newd = countd(newE);
-    out << "новый массив потенциалов: ";
+    //out << "новый массив потенциалов: ";
 
-    for (int i : newd) {
+    /*for (int i : newd) {
         out << i << " ";
     }
-    out << '\n';
+    out << '\n';*/
 
     out << "старый потенциал = " << getD() << "\nпосле флипа = " << newD << '\n';
 

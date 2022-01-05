@@ -18,26 +18,26 @@ enum TypeGraph {
 class Graph {
 private:
     vector<int> d;
-    int D;
+    long long D;
     vector<int> e;
 public:
     int n;
-    int numberEdges;
+    long long numberEdges;
     vector< vector<int> > matrix;
     TypeGraph type;
 
     Graph(int size, TypeGraph t);
 
     void setVecD(vector<int> nd);
-    void setD(int nD);
+    void setD(long long nD);
     void setE(vector<int> ne);
 
     vector<int> getVecD();
-    int getD();
+    long long getD();
     vector<int> getE();
 
     vector<int> countd(vector<int> e);
-    int countD(vector<int> e);
+    long long countD(vector<int> e);
     void createKn();
     void createKnn();
     void createRandom();

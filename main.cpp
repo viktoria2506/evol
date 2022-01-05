@@ -12,8 +12,6 @@ int main() {
     out.open("/Users/viktoria/CLionProjects/evol/out");
     out << "";
 
-    unsigned int start_time =  clock();
-
     auto *g_32_kn = new Graph(32, KN);
     g_32_kn->RLS(1);
     delete g_32_kn;
@@ -56,7 +54,7 @@ int main() {
 
     auto  *g_256_knn = new Graph(256, KNN);
     g_256_knn->RLS(1);
-    delete g_256_kn;
+    delete g_256_knn;
 
     auto *g_512_knn = new Graph(512, KNN);
     g_512_knn->RLS(1);
@@ -70,7 +68,40 @@ int main() {
     g_2048_knn->RLS(1);
     delete g_2048_knn;
 
+    auto *g_32_random = new Graph(32, RANDOM);
+    g_32_random->RLS(1);
+    delete g_32_random;
+
+    auto *g_64_random = new Graph(64, RANDOM);
+    g_64_random->RLS(1);
+    delete g_64_random;
+
+    auto *g_128_random = new Graph(128, RANDOM);
+    g_128_random->RLS(1);
+    delete g_128_random;
+
+    auto *g_256_random = new Graph(256, RANDOM);
+    g_256_random->RLS(1);
+    delete g_256_random;
+
+    auto *g_512_random = new Graph(512, RANDOM);
+    g_512_random->RLS(1);
+    delete g_512_random;
+
+    auto *g_1024_random = new Graph(1024, RANDOM);
+    g_1024_random->RLS(1);
+    delete g_1024_random;
+
+    auto *g_2048_random = new Graph(2048, RANDOM);
+    g_2048_random->RLS(1);
+    delete g_2048_random;
+
     // 1+1
+    out.open("/Users/viktoria/CLionProjects/evol/out");
+    out << "-----------------------\n";
+    out << "1+1\n";
+    out << "-----------------------\n";
+
     auto *g_32_knn_one = new Graph(32, KNN);
     g_32_knn_one->onePlusOneAlgorithm(1);
     delete g_32_knn_one;
@@ -127,10 +158,33 @@ int main() {
     g_2048_kn_one->onePlusOneAlgorithm(1);
     delete g_2048_kn_one;
 
-    unsigned int end_time = clock();
-    unsigned int dur = end_time - start_time;
+    auto *g_32_random_one = new Graph (32, RANDOM);
+    g_32_random_one->onePlusOneAlgorithm(1);
+    delete g_32_random_one;
 
-    out.open("/Users/viktoria/CLionProjects/evol/out");
-    out << dur;
+    auto *g_64_random_one = new Graph (64, RANDOM);
+    g_64_random_one->onePlusOneAlgorithm(1);
+    delete g_64_random_one;
+
+    auto *g_128_random_one = new Graph (128, RANDOM);
+    g_128_random_one->onePlusOneAlgorithm(1);
+    delete g_128_random_one;
+
+    auto *g_256_random_one = new Graph (256, RANDOM);
+    g_256_random_one->onePlusOneAlgorithm(1);
+    delete g_256_random_one;
+
+    auto *g_512_random_one = new Graph (512, RANDOM);
+    g_512_random_one->onePlusOneAlgorithm(1);
+    delete g_512_random_one;
+
+    auto *g_1024_random_one = new Graph (1024, RANDOM);
+    g_1024_random_one->onePlusOneAlgorithm(1);
+    delete g_1024_random_one;
+
+    auto *g_2056_random_one = new Graph (2056, RANDOM);
+    g_2056_random_one->onePlusOneAlgorithm(1);
+    delete g_2056_random_one;
+
     return 0;
 }

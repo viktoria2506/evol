@@ -191,6 +191,47 @@ void Graph::RLS (int iteration) {
 }
 
 void Graph::onePlusOneAlgorithm(int iteration){
-    
+    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    out << "---------------------------\n";
+    out << "iteration " << iteration << '\n';
+    int l = rand() % this->n;
+
+    out << "flip " << l << " bits\n";
+    vector<int> newE = getE();
+
+    vector<int> flipArr(this->n, 0);
+
+    for (int i = 0; i < l; i++) {
+        int index;
+
+        while(true) {
+            index = rand() % this->n;
+
+            if (flipArr[index] != 1) {
+                flipArr[index] = 1;
+                newE[index] = (newE[index] + 1) % 2;
+                break;
+            }
+        }
+    }
+
+    long long newD = countD(newE);
+
+    out << "старый потенциал = " << getD() << "\nпосле флипа = " << newD << '\n';
+
+    setE(newE);
+    setVecD(countd(newE));
+    setD(countD(newE));
+
+    if (getD() > 0) {
+        iteration++;
+        out.close();
+        onePlusOneAlgorithm(iteration);
+    } else {
+        out << "---------------------------\n";
+        out << "(" << this->n << ", " << this->type << ")\n";
+        out << "разрезана половина ребер за " << iteration << " итераций\n";
+        out << "---------------------------\n";
+    }
 }
 

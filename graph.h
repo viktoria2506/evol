@@ -46,7 +46,7 @@ public:
     void printVec(vector<int> vec);
 
     void RLS(int iteration);
-    void lambdaAlgorithm();
+    void lambdaAlgorithm(int iteration);
     void onePlusOneAlgorithm(int iteration);
 };
 

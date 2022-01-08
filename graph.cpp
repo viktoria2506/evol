@@ -7,6 +7,8 @@
 
 using namespace std;
 
+const int LAMBDA = 10;
+
 Graph::Graph(int size, TypeGraph t) {
     type = t;
     n = size;
@@ -54,14 +56,15 @@ void Graph::printVec(vector<int> vec) {
 
 void Graph::printMatrix() {
     ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
-    out << "количество вершин " << matrix.size() << '\n' << "матрица смежности matrix:" << '\n';
+    out << "количество вершин " << matrix.size() << '\n';
+    /*out << "матрица смежности matrix:" << '\n';
     for (auto & i : matrix) {
         for (int j = 0; j < matrix.size(); j++) {
             out << i[j] << " ";
         }
         out << '\n';
-    }
-    out << "---------------------------" << '\n';
+    }*/
+    //out << "---------------------------" << '\n';
     out << "количество ребер: " << numberEdges << '\n';
     out << "---------------------------" << '\n';
     out.close();
@@ -147,7 +150,7 @@ void Graph::createRandom () {
 
     setVecD(countd(getE()));
     setD(countD(getE()));
-    //printMatrix();
+    printMatrix();
 }
 
 void Graph::RLS (int iteration) {
@@ -240,7 +243,7 @@ void Graph::onePlusOneAlgorithm(int iteration){
 
     setE(newE);
     setVecD(countd(newE));
-    setD(countD(newE));
+    setD(newD);
 
     if (getD() > 0) {
         iteration++;
@@ -249,6 +252,113 @@ void Graph::onePlusOneAlgorithm(int iteration){
     } else {
         out << "---------------------------\n";
         out << "(" << this->n << ", " << this->type << ")\n";
+        out << "разрезана половина ребер за " << iteration << " итераций\n";
+        out << "---------------------------\n";
+    }
+}
+
+void Graph::lambdaAlgorithm(int iteration) {
+    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    out << "---------------------------\n";
+    out << "iteration " << iteration << '\n';
+
+    int l = rand() % this->n;
+    vector<int> x = getE();
+    out << "flip " << l << " bits\n";
+    vector<vector<int>> mutationArr(LAMBDA, x);
+
+    for (int i = 0; i < LAMBDA; i++) {
+        vector<int> flipArr(this->n, 0);
+
+        for (int j = 0; j < l; j++) {
+            int index;
+
+            while(true) {
+                index = rand() % this->n;
+
+                if (flipArr[index] != 1) {
+                    flipArr[index] = 1;
+                    mutationArr[i][index] = (mutationArr[i][index] + 1) % 2;
+                    break;
+                }
+            }
+        }
+    }
+
+    int mutationWinIndex = 0;
+    int bestMutD = countD(mutationArr[mutationWinIndex]);
+
+    for (int i = 1; i < LAMBDA; i++) {
+        int curD = countD(mutationArr[i]);
+
+        if (curD < bestMutD) {
+            mutationWinIndex = i;
+            bestMutD = curD;
+        }
+    }
+
+    out << "победитель мутации:  ";
+    for (int i : mutationArr[mutationWinIndex]) {
+        out << i << " ";
+    }
+    out << '\n';
+
+    out << "старый потенциал = " << getD() << "\nпосле флипа = " << bestMutD << '\n';
+
+    vector<vector<int>> y(LAMBDA, x);
+
+    for (int i = 0; i < LAMBDA; i++) {
+        for (int j = 0; j < y[i].size(); j++) {
+            if(mutationArr[mutationWinIndex][j] != y[i][j]) {
+                if ((double)rand() / (double)RAND_MAX < (double)1/LAMBDA) {
+                    y[i][j] = (y[i][j] + 1) % 2;
+                }
+            }
+        }
+    }
+
+    int crossoverWinIndex = 0;
+    int bestCrossD = countD(y[crossoverWinIndex]);
+
+    for (int i = 1; i < LAMBDA; i++) {
+        int curD = countD(y[i]);
+
+        if (curD < bestCrossD) {
+            crossoverWinIndex = i;
+            bestCrossD = curD;
+        }
+    }
+
+    out << "победитель кроссовера:  ";
+    for (int i : y[crossoverWinIndex]) {
+        out << i << " ";
+    }
+    out << '\n';
+
+    out << "старый потенциал = " << getD() << "\nпосле кроссовера = " << bestCrossD << '\n';
+
+    if (getD() > bestCrossD) {
+        setE(y[crossoverWinIndex]);
+        setVecD(countd(y[crossoverWinIndex]));
+        setD(bestCrossD);
+        out << "good mutation\n";
+    }
+
+    if (getD() > 0) {
+        iteration++;
+        out.close();
+        lambdaAlgorithm(iteration);
+    } else {
+        out << "---------------------------\n";
+        out << "(" << this->n << ", ";
+        if (this->type == KN) {
+            out << "KN";
+        } else if (this->type == KNN) {
+            out << "KNN";
+        } else {
+            out << "Random";
+        }
+        out << ")\n";
         out << "разрезана половина ребер за " << iteration << " итераций\n";
         out << "---------------------------\n";
     }

@@ -103,6 +103,8 @@ long long Graph::countD (vector<int> newE) {
 }
 
 void Graph::createKn () {
+    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    out << "KN graph\n";
     matrix = vector< vector <int> >(n, vector<int> (n, 0));
 
     for (int i = 0; i < n; i++) {
@@ -117,10 +119,12 @@ void Graph::createKn () {
     setVecD(countd(getE()));
     setD(countD(getE()));
 
-    //printMatrix();
+    printMatrix();
 };
 
 void Graph::createKnn () {
+    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    out << "KNN graph\n";
     matrix = vector< vector <int> >(n, vector<int> (n, 0));
 
     for (int i = 0; i < n/2; i++) {
@@ -133,10 +137,12 @@ void Graph::createKnn () {
 
     setVecD(countd(getE()));
     setD(countD(getE()));
-    //printMatrix();
+    printMatrix();
 };
 
 void Graph::createRandom () {
+    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    out << "RANDOM graph\n";
     matrix = vector< vector <int> >(n, vector<int> (n, 0));
 
     for (int i = 0; i < n; i++) {
@@ -156,7 +162,7 @@ void Graph::createRandom () {
 void Graph::RLS (int iteration) {
     ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
     out << "---------------------------\n";
-    out << "iteration " << iteration << '\n';
+    //out << "iteration " << iteration << '\n';
     int pos = rand() % this->n;
 
     out << "flip " << pos << '\n';
@@ -206,7 +212,15 @@ void Graph::RLS (int iteration) {
         RLS(iteration);
     } else {
         out << "---------------------------\n";
-        out << "(" << this->n << ", " << this->type << ")\n";
+        out << "(" << this->n << ", ";
+        if (this->type == KN) {
+            out << "KN";
+        } else if (this->type == KNN) {
+            out << "KNN";
+        } else {
+            out << "Random";
+        }
+        out << ")\n";
         out << "разрезана половина ребер за " << iteration << " итераций\n";
         out << "---------------------------\n";
     }
@@ -215,7 +229,7 @@ void Graph::RLS (int iteration) {
 void Graph::onePlusOneAlgorithm(int iteration){
     ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
     out << "---------------------------\n";
-    out << "iteration " << iteration << '\n';
+    //out << "iteration " << iteration << '\n';
     int l = rand() % this->n;
 
     out << "flip " << l << " bits\n";
@@ -251,7 +265,15 @@ void Graph::onePlusOneAlgorithm(int iteration){
         onePlusOneAlgorithm(iteration);
     } else {
         out << "---------------------------\n";
-        out << "(" << this->n << ", " << this->type << ")\n";
+        out << "(" << this->n << ", " ;
+        if (this->type == KN) {
+            out << "KN";
+        } else if (this->type == KNN) {
+            out << "KNN";
+        } else {
+            out << "Random";
+        }
+        out << ")\n";
         out << "разрезана половина ребер за " << iteration << " итераций\n";
         out << "---------------------------\n";
     }
@@ -260,7 +282,7 @@ void Graph::onePlusOneAlgorithm(int iteration){
 void Graph::lambdaAlgorithm(int iteration) {
     ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
     out << "---------------------------\n";
-    out << "iteration " << iteration << '\n';
+    //out << "iteration " << iteration << '\n';
 
     int l = rand() % this->n;
     vector<int> x = getE();

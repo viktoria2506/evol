@@ -25,6 +25,14 @@ Graph::Graph(int size, TypeGraph t) {
     }
 };
 
+
+void Graph::reset() {
+    vector<int> ne = vector<int> (n, 0);
+    setE(ne);
+    setVecD(countd(getE()));
+    setD(countD(getE()));
+};
+
 void Graph::setVecD(vector<int> nd) {
     d = move(nd);
 };
@@ -159,7 +167,7 @@ void Graph::createRandom () {
     printMatrix();
 }
 
-void Graph::RLS (int iteration) {
+int Graph::RLS (int iteration) {
     ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
     out << "---------------------------\n";
     //out << "iteration " << iteration << '\n';
@@ -209,7 +217,7 @@ void Graph::RLS (int iteration) {
     if (getD() > 0) {
         iteration++;
         out.close();
-        RLS(iteration);
+        return RLS(iteration);
     } else {
         out << "---------------------------\n";
         out << "(" << this->n << ", ";
@@ -223,10 +231,11 @@ void Graph::RLS (int iteration) {
         out << ")\n";
         out << "разрезана половина ребер за " << iteration << " итераций\n";
         out << "---------------------------\n";
+        return iteration;
     }
 }
 
-void Graph::onePlusOneAlgorithm(int iteration){
+int Graph::onePlusOneAlgorithm(int iteration){
     ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
     out << "---------------------------\n";
     //out << "iteration " << iteration << '\n';
@@ -262,7 +271,7 @@ void Graph::onePlusOneAlgorithm(int iteration){
     if (getD() > 0) {
         iteration++;
         out.close();
-        onePlusOneAlgorithm(iteration);
+        return onePlusOneAlgorithm(iteration);
     } else {
         out << "---------------------------\n";
         out << "(" << this->n << ", " ;
@@ -276,10 +285,11 @@ void Graph::onePlusOneAlgorithm(int iteration){
         out << ")\n";
         out << "разрезана половина ребер за " << iteration << " итераций\n";
         out << "---------------------------\n";
+        return iteration;
     }
 }
 
-void Graph::lambdaAlgorithm(int iteration) {
+int Graph::lambdaAlgorithm(int iteration) {
     ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
     out << "---------------------------\n";
     //out << "iteration " << iteration << '\n';
@@ -369,7 +379,7 @@ void Graph::lambdaAlgorithm(int iteration) {
     if (getD() > 0) {
         iteration++;
         out.close();
-        lambdaAlgorithm(iteration);
+        return lambdaAlgorithm(iteration);
     } else {
         out << "---------------------------\n";
         out << "(" << this->n << ", ";
@@ -383,6 +393,7 @@ void Graph::lambdaAlgorithm(int iteration) {
         out << ")\n";
         out << "разрезана половина ребер за " << iteration << " итераций\n";
         out << "---------------------------\n";
+        return iteration;
     }
 }
 

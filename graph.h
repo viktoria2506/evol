@@ -27,6 +27,7 @@ public:
     TypeGraph type;
 
     Graph(int size, TypeGraph t);
+    ~Graph();
 
     void setVecD(vector<int> nd);
     void setD(long long nD);
@@ -45,9 +46,11 @@ public:
     void printMatrix();
     void printVec(vector<int> vec);
 
-    void RLS(int iteration);
-    void lambdaAlgorithm(int iteration);
-    void onePlusOneAlgorithm(int iteration);
+    int RLS(int iteration);
+    int lambdaAlgorithm(int iteration);
+    int onePlusOneAlgorithm(int iteration);
+
+    void reset();
 };
 
 #endif //EVOL_GRAPH_H

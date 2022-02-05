@@ -6,267 +6,93 @@
 
 using namespace std;
 
+enum TypeAlgo {
+    RLS,
+    ONEPLUSONE,
+    LAMBDA
+};
+
+const int REPEAT = 80;
+
+void runAlgo (Graph* graph, TypeGraph typeGraph, int size, TypeAlgo typeAlgo) {
+
+    vector<int> result = vector<int> (REPEAT, 0);
+
+    int sum = 0;
+    int max = 0;
+    int min = 100000000;
+
+    for (int i = 0; i < REPEAT; i++) {
+        if (typeAlgo == RLS) result[i] = graph->RLS(1);
+        else if (typeAlgo == ONEPLUSONE) result[i] = graph->onePlusOneAlgorithm(1);
+        else if (typeAlgo == LAMBDA) result[i] = graph->lambdaAlgorithm(1);
+
+        sum += result[i];
+        if (result[i] > max) max = result[i];
+        if (result[i] < min) min = result[i];
+
+        graph->reset();
+    }
+
+    double average = (double) sum / REPEAT;
+
+    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    out << "результаты:\n";
+    out << "размер графа - " << size << '\n';
+    out << "тип графа - ";
+
+    if (typeGraph == KN) {
+        out << "KN\n";
+    } else if (typeGraph == KNN) {
+        out << "KNN\n";
+    } else if (typeGraph == RANDOM) {
+        out << "Random\n";
+    }
+
+    out << "алгоритм - ";
+    if (typeAlgo == RLS) {
+        out << "RLS\n";
+    } else if (typeAlgo == ONEPLUSONE) {
+        out << "(1 + 1)\n";
+    } else if (typeAlgo == LAMBDA) {
+        out << "(1 + (лямбда, лямбда))\n";
+    }
+
+    out << "время работы: ";
+    for (int i =0; i < REPEAT; i++) {
+        out << result[i] << ' ';
+    }
+    out << '\n';
+    out << "границы - [" << min << ", " << max << "]\n";
+
+    out << "среднее время работы - " << average << '\n';
+    out << "нормированное по размеру задачи - " << (double) average / size << '\n';
+}
+
+void run (TypeGraph typeGraph, int size, vector<TypeAlgo> typesAlgo) {
+    auto *graph = new Graph(size, typeGraph);
+
+    for (auto & i : typesAlgo) {
+        runAlgo(graph, typeGraph, size, i);
+    }
+
+}
+
 int main() {
-    int repeat = 10;
     srand(static_cast<unsigned int>(time(0)));
     ofstream out;
     out.open("/Users/viktoria/CLionProjects/evol/out");
     out << "";
 
-    for (int i = 0; i < repeat; i++ ) {
-        auto *g_32_kn = new Graph(32, KN);
-         g_32_kn->RLS(1);
-         delete g_32_kn;
+    vector<int> sizeGraph {2048}; //{32, 64, 128, 256, 512, 1024, 2048}
+    vector<TypeAlgo> typesAlgo = {RLS, ONEPLUSONE, LAMBDA}; //{RLS, ONEPLUSONE, LAMBDA}
+    vector<TypeGraph> typesGraph = {KN};  //{KNN, KN, RANDOM}
 
-         auto *g_64_kn = new Graph(64, KN);
-         g_64_kn->RLS(1);
-         delete g_64_kn;
 
-         auto *g_128_kn = new Graph(128, KN);
-         g_128_kn->RLS(1);
-         delete g_128_kn;
-
-         auto *g_256_kn = new Graph(256, KN);
-         g_256_kn->RLS(1);
-         delete g_256_kn;
-
-         auto *g_512_kn = new Graph(512, KN);
-         g_512_kn->RLS(1);
-         delete g_512_kn;
-
-         auto *g_1024_kn = new Graph(1024, KN);
-         g_1024_kn->RLS(1);
-         delete g_1024_kn;
-
-         auto *g_2048_kn = new Graph(2048, KN);
-         g_2048_kn->RLS(1);
-         delete g_2048_kn;
-
-         auto *g_32_knn = new Graph (32, KNN);
-         g_32_knn->RLS(1);
-         delete g_32_knn;
-
-         auto *g_64_knn = new Graph (64, KNN);
-         g_64_knn->RLS(1);
-         delete g_64_knn;
-
-         auto *g_128_knn = new Graph (128, KNN);
-         g_128_knn->RLS(1);
-         delete g_128_knn;
-
-         auto  *g_256_knn = new Graph(256, KNN);
-         g_256_knn->RLS(1);
-         delete g_256_knn;
-
-         auto *g_512_knn = new Graph(512, KNN);
-         g_512_knn->RLS(1);
-         delete g_512_knn;
-
-         auto *g_1024_knn = new Graph(1024, KNN);
-         g_1024_knn->RLS(1);
-         delete g_1024_knn;
-
-         auto *g_2048_knn = new Graph (2048, KNN);
-         g_2048_knn->RLS(1);
-         delete g_2048_knn;
-
-         auto *g_32_random = new Graph(32, RANDOM);
-         g_32_random->RLS(1);
-         delete g_32_random;
-
-         auto *g_64_random = new Graph(64, RANDOM);
-         g_64_random->RLS(1);
-         delete g_64_random;
-
-         auto *g_128_random = new Graph(128, RANDOM);
-         g_128_random->RLS(1);
-         delete g_128_random;
-
-         auto *g_256_random = new Graph(256, RANDOM);
-         g_256_random->RLS(1);
-         delete g_256_random;
-
-         auto *g_512_random = new Graph(512, RANDOM);
-         g_512_random->RLS(1);
-         delete g_512_random;
-
-         auto *g_1024_random = new Graph(1024, RANDOM);
-         g_1024_random->RLS(1);
-         delete g_1024_random;
-
-         auto *g_2048_random = new Graph(2048, RANDOM);
-         g_2048_random->RLS(1);
-         delete g_2048_random;
-
-         // 1+1
-         auto *g_32_kn_one = new Graph (32, KN);
-         g_32_kn_one->onePlusOneAlgorithm(1);
-         delete g_32_kn_one;
-
-         auto *g_64_kn_one = new Graph (64, KN);
-         g_64_kn_one->onePlusOneAlgorithm(1);
-         delete g_64_kn_one;
-
-         auto *g_128_kn_one = new Graph (128, KN);
-         g_128_kn_one->onePlusOneAlgorithm(1);
-         delete g_128_kn_one;
-
-         auto *g_256_kn_one = new Graph (256, KN);
-         g_256_kn_one->onePlusOneAlgorithm(1);
-         delete g_256_kn_one;
-
-         auto *g_512_kn_one = new Graph (512, KN);
-         g_512_kn_one->onePlusOneAlgorithm(1);
-         delete g_512_kn_one;
-
-         auto *g_1024_kn_one = new Graph (1024, KN);
-         g_1024_kn_one->onePlusOneAlgorithm(1);
-         delete g_1024_kn_one;
-
-         auto *g_2048_kn_one = new Graph (2048, KN);
-         g_2048_kn_one->onePlusOneAlgorithm(1);
-         delete g_2048_kn_one;
-
-         auto *g_32_knn_one = new Graph(32, KNN);
-         g_32_knn_one->onePlusOneAlgorithm(1);
-         delete g_32_knn_one;
-
-         auto *g_64_knn_one = new Graph(64, KNN);
-         g_64_knn_one->onePlusOneAlgorithm(1);
-         delete g_64_knn_one;
-
-         auto *g_128_knn_one = new Graph(128, KNN);
-         g_128_knn_one->onePlusOneAlgorithm(1);
-         delete g_128_knn_one;
-
-         auto *g_256_knn_one = new Graph (256, KNN);
-         g_256_knn_one->onePlusOneAlgorithm(1);
-         delete g_256_knn_one;
-
-         auto *g_512_knn_one = new Graph (512, KNN);
-         g_512_knn_one->onePlusOneAlgorithm(1);
-         delete g_512_knn_one;
-
-         auto *g_1024_knn_one = new Graph (1024, KNN);
-         g_1024_knn_one->onePlusOneAlgorithm(1);
-         delete g_1024_knn_one;
-
-         auto *g_2048_knn_one = new Graph (2048, KNN);
-         g_2048_knn_one->onePlusOneAlgorithm(1);
-         delete g_2048_knn_one;
-
-         auto *g_32_random_one = new Graph (32, RANDOM);
-         g_32_random_one->onePlusOneAlgorithm(1);
-         delete g_32_random_one;
-
-         auto *g_64_random_one = new Graph (64, RANDOM);
-         g_64_random_one->onePlusOneAlgorithm(1);
-         delete g_64_random_one;
-
-         auto *g_128_random_one = new Graph (128, RANDOM);
-         g_128_random_one->onePlusOneAlgorithm(1);
-         delete g_128_random_one;
-
-         auto *g_256_random_one = new Graph (256, RANDOM);
-         g_256_random_one->onePlusOneAlgorithm(1);
-         delete g_256_random_one;
-
-         auto *g_512_random_one = new Graph (512, RANDOM);
-         g_512_random_one->onePlusOneAlgorithm(1);
-         delete g_512_random_one;
-
-         auto *g_1024_random_one = new Graph (1024, RANDOM);
-         g_1024_random_one->onePlusOneAlgorithm(1);
-         delete g_1024_random_one;
-
-         auto *g_2056_random_one = new Graph (2056, RANDOM);
-         g_2056_random_one->onePlusOneAlgorithm(1);
-         delete g_2056_random_one;
-
-        // lambda
-        auto *g_32_knn_lambda = new Graph(32, KNN);
-        g_32_knn_lambda->lambdaAlgorithm(1);
-        delete g_32_knn_lambda;
-
-        auto *g_64_knn_lambda = new Graph(64, KNN);
-        g_64_knn_lambda->lambdaAlgorithm(1);
-        delete g_64_knn_lambda;
-
-        auto *g_128_knn_lambda = new Graph(128, KNN);
-        g_128_knn_lambda->lambdaAlgorithm(1);
-        delete g_128_knn_lambda;
-
-        auto *g_256_knn_lambda = new Graph(256, KNN);
-        g_256_knn_lambda->lambdaAlgorithm(1);
-        delete g_256_knn_lambda;
-
-        auto *g_512_knn_lambda = new Graph(512, KNN);
-        g_512_knn_lambda->lambdaAlgorithm(1);
-        delete g_512_knn_lambda;
-
-        auto *g_1024_knn_lambda = new Graph(1024, KNN);
-        g_1024_knn_lambda->lambdaAlgorithm(1);
-        delete g_1024_knn_lambda;
-
-        auto *g_2048_knn_lambda = new Graph(2048, KNN);
-        g_2048_knn_lambda->lambdaAlgorithm(1);
-        delete g_2048_knn_lambda;
-
-        auto *g_32_kn_lambda = new Graph(32, KN);
-        g_32_kn_lambda->lambdaAlgorithm(1);
-        delete g_32_kn_lambda;
-
-        auto *g_64_kn_lambda = new Graph(64, KN);
-        g_64_kn_lambda->lambdaAlgorithm(1);
-        delete g_64_kn_lambda;
-
-        auto *g_128_kn_lambda = new Graph(128, KN);
-        g_128_kn_lambda->lambdaAlgorithm(1);
-        delete g_128_kn_lambda;
-
-        auto *g_256_kn_lambda = new Graph(256, KN);
-        g_256_kn_lambda->lambdaAlgorithm(1);
-        delete g_256_kn_lambda;
-
-        auto *g_512_kn_lambda = new Graph(512, KN);
-        g_512_kn_lambda->lambdaAlgorithm(1);
-        delete g_512_kn_lambda;
-
-        auto *g_1024_kn_lambda = new Graph(1024, KN);
-        g_1024_kn_lambda->lambdaAlgorithm(1);
-        delete g_1024_kn_lambda;
-
-        auto *g_2048_kn_lambda = new Graph(2048, KN);
-        g_2048_kn_lambda->lambdaAlgorithm(1);
-        delete g_2048_kn_lambda;
-
-        auto *g_32_random_lambda = new Graph(32, RANDOM);
-        g_32_random_lambda->lambdaAlgorithm(1);
-        delete g_32_random_lambda;
-
-        auto *g_64_random_lambda = new Graph(64, RANDOM);
-        g_64_random_lambda->lambdaAlgorithm(1);
-        delete g_64_random_lambda;
-
-        auto *g_128_random_lambda = new Graph(128, RANDOM);
-        g_128_random_lambda->lambdaAlgorithm(1);
-        delete g_128_random_lambda;
-
-        auto *g_256_random_lambda = new Graph(256, RANDOM);
-        g_256_random_lambda->lambdaAlgorithm(1);
-        delete g_256_random_lambda;
-
-        auto *g_512_random_lambda = new Graph(512, RANDOM);
-        g_512_random_lambda->lambdaAlgorithm(1);
-        delete g_512_random_lambda;
-
-        auto *g_1024_random_lambda = new Graph(1024, RANDOM);
-        g_1024_random_lambda->lambdaAlgorithm(1);
-        delete g_1024_random_lambda;
-
-        auto *g_2048_random_lambda = new Graph(2048, RANDOM);
-        g_2048_random_lambda->lambdaAlgorithm(1);
-        delete g_2048_random_lambda;
+    for (int i = 0; i < typesGraph.size(); i++) {
+            for (int j = 0; j < sizeGraph.size(); j++) {
+                run(typesGraph[i], sizeGraph[j], typesAlgo);
+            }
     }
     return 0;
 }

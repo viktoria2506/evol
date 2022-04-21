@@ -49,6 +49,7 @@ public:
     int RLS(int iteration);
     int lambdaAlgorithm(int iteration);
     int onePlusOneAlgorithm(int iteration);
+    int onePlusOneHeavyTailedAlgorithm(int iteration, vector<double> dist);
 
     void reset();
 };

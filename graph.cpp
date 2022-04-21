@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <fstream>
 #include <ctime>
+#include <random>
+#include <chrono>
 #include "graph.h"
 
 using namespace std;
@@ -25,6 +27,7 @@ Graph::Graph(int size, TypeGraph t) {
     }
 };
 
+}
 
 void Graph::reset() {
     vector<int> ne = vector<int> (n, 0);
@@ -54,7 +57,7 @@ vector<int> Graph::getE(){
 };
 
 void Graph::printVec(vector<int> vec) {
-    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    ofstream out("C:/Users/Viktoriya/CLionProjects/evol/out", ios_base::app);
     for (int i : vec) {
         out << i << " ";
     }
@@ -63,7 +66,7 @@ void Graph::printVec(vector<int> vec) {
 }
 
 void Graph::printMatrix() {
-    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    ofstream out("C:/Users/Viktoriya/CLionProjects/evol/out", ios_base::app);
     out << "количество вершин " << matrix.size() << '\n';
     /*out << "матрица смежности matrix:" << '\n';
     for (auto & i : matrix) {
@@ -111,7 +114,7 @@ long long Graph::countD (vector<int> newE) {
 }
 
 void Graph::createKn () {
-    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    ofstream out("C:/Users/Viktoriya/CLionProjects/evol/out", ios_base::app);
     out << "KN graph\n";
     matrix = vector< vector <int> >(n, vector<int> (n, 0));
 
@@ -131,7 +134,7 @@ void Graph::createKn () {
 };
 
 void Graph::createKnn () {
-    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    ofstream out("C:/Users/Viktoriya/CLionProjects/evol/out", ios_base::app);
     out << "KNN graph\n";
     matrix = vector< vector <int> >(n, vector<int> (n, 0));
 
@@ -149,7 +152,7 @@ void Graph::createKnn () {
 };
 
 void Graph::createRandom () {
-    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    ofstream out("C:/Users/Viktoriya/CLionProjects/evol/out", ios_base::app);
     out << "RANDOM graph\n";
     matrix = vector< vector <int> >(n, vector<int> (n, 0));
 
@@ -167,8 +170,32 @@ void Graph::createRandom () {
     printMatrix();
 }
 
+
+
+int binSearch (double x, vector<double> dist) {
+    ofstream out("C:/Users/Viktoriya/CLionProjects/evol/out", ios_base::app);
+    //out << "X   " << x <<'\n';
+    int l = 0;
+    int r = dist.size();
+
+    while (r > l) {
+        int m = (l + r) / 2;
+
+        if (dist[m] - x < 1e-12) {
+            l = m + 1;
+        } else if (dist[m] - x >= 1e-12) {
+            r = m - 1;
+        } else {
+            return m;
+        }
+    }
+    if (l == dist.size()) return l;
+
+    return l + 1;
+}
+
 int Graph::RLS (int iteration) {
-    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    ofstream out("C:/Users/Viktoriya/CLionProjects/evol/out", ios_base::app);
     out << "---------------------------\n";
     //out << "iteration " << iteration << '\n';
     int pos = rand() % this->n;
@@ -236,10 +263,21 @@ int Graph::RLS (int iteration) {
 }
 
 int Graph::onePlusOneAlgorithm(int iteration){
-    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    ofstream out("C:/Users/Viktoriya/CLionProjects/evol/out", ios_base::app);
     out << "---------------------------\n";
     //out << "iteration " << iteration << '\n';
-    int l = rand() % this->n;
+    //int l = rand() % this->n;
+    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+    default_random_engine generator(seed);
+    binomial_distribution<int> distribution(this->n,(double) 1/this->n);
+
+    int l = distribution(generator);
+    /*for (int i = 0; i< 10; i++) {
+        int l = distribution(generator);
+
+        out << "flip " << l << " bits\n";
+    }*/
+
 
     out << "flip " << l << " bits\n";
     vector<int> newE = getE();
@@ -264,9 +302,16 @@ int Graph::onePlusOneAlgorithm(int iteration){
 
     out << "старый потенциал = " << getD() << "\nпосле флипа = " << newD << '\n';
 
-    setE(newE);
-    setVecD(countd(newE));
-    setD(newD);
+    if (newD <= getD()) {
+        setE(newE);
+        setVecD(countd(newE));
+        setD(countD(newE));
+        out << "good mutation\n";
+    }
+
+    //setE(newE);
+    //setVecD(countd(newE));
+    //setD(newD);
 
     if (getD() > 0) {
         iteration++;
@@ -289,14 +334,102 @@ int Graph::onePlusOneAlgorithm(int iteration){
     }
 }
 
+int Graph::onePlusOneHeavyTailedAlgorithm(int iteration, vector<double> dist) {
+    ofstream out("C:/Users/Viktoriya/CLionProjects/evol/out", ios_base::app);
+    out << "---------------------------\n";
+
+    /*random_device rd;
+    mt19937 gen(rd());*/
+    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+    default_random_engine generator(seed);
+    uniform_real_distribution<> distribution(0.0, 1.0);
+
+    double y =  distribution(generator);
+    int l = binSearch(y, dist);
+
+    //double x =  pow(((pow(this->n,(1-BETTA)) - 1)*y + 1) ,(1/(1-BETTA)));
+
+    //int alpha = (int) x;
+
+    //binomial_distribution<int> distribution_bin(this->n,(double) alpha/this->n);
+
+    //int l = distribution_bin(generator);
+    //int l = (int) x;
+
+    out << "flip " << l << " bits\n";
+    vector<int> newE = getE();
+
+    vector<int> flipArr(this->n, 0);
+
+    for (int i = 0; i < l; i++) {
+        int index;
+
+        while(true) {
+            index = rand() % this->n;
+
+            if (flipArr[index] != 1) {
+                flipArr[index] = 1;
+                newE[index] = (newE[index] + 1) % 2;
+                break;
+            }
+        }
+    }
+
+    long long newD = countD(newE);
+
+    out << "старый потенциал = " << getD() << "\nпосле флипа = " << newD << '\n';
+
+    if (newD <= getD()) {
+        setE(newE);
+        setVecD(countd(newE));
+        setD(countD(newE));
+        out << "good mutation\n";
+    }
+
+    if (getD() > 0) {
+        iteration++;
+        out.close();
+        return onePlusOneHeavyTailedAlgorithm(iteration, dist);
+    } else {
+        out << "---------------------------\n";
+        out << "(" << this->n << ", " ;
+        if (this->type == KN) {
+            out << "KN";
+        } else if (this->type == KNN) {
+            out << "KNN";
+        } else {
+            out << "Random";
+        }
+        out << ")\n";
+        out << "разрезана половина ребер за " << iteration << " итераций\n";
+        out << "---------------------------\n";
+        return iteration;
+    }
+}
+
+
+
 int Graph::lambdaAlgorithm(int iteration) {
-    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    ofstream out("C:/Users/Viktoriya/CLionProjects/evol/out", ios_base::app);
     out << "---------------------------\n";
     //out << "iteration " << iteration << '\n';
 
-    int l = rand() % this->n;
+    //int l = rand() % this->n;
+
+    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+    default_random_engine generator(seed);
+    binomial_distribution<int> distribution(this->n,(double) 1/this->n);
+
+    int l = distribution(generator);
     vector<int> x = getE();
     out << "flip " << l << " bits\n";
+
+    if (l == 0) {
+        iteration++;
+        out.close();
+        return lambdaAlgorithm(iteration);
+    }
+
     vector<vector<int>> mutationArr(LAMBDA, x);
 
     for (int i = 0; i < LAMBDA; i++) {

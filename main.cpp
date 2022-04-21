@@ -2,6 +2,7 @@
 #include <fstream>
 #include <ctime>
 #include <stdlib.h>
+#include <valarray>
 #include "graph.h"
 
 using namespace std;
@@ -9,10 +10,12 @@ using namespace std;
 enum TypeAlgo {
     RLS,
     ONEPLUSONE,
-    LAMBDA
+    LAMBDA,
+    ONEPLUSONE_POWERLAW
 };
 
 const int REPEAT = 80;
+const double BETTA = 1.5; // for power law
 /*
 void runAlgo ( TypeGraph typeGraph, int size, TypeAlgo typeAlgo) {
     vector<int> resultRls = vector<int> (REPEAT, 0);
@@ -105,6 +108,27 @@ void runAlgo ( TypeGraph typeGraph, int size, TypeAlgo typeAlgo) {
 
 }*/
 
+vector<double> powerLawDistribution (int n) {
+    //ofstream out("C:/Users/Viktoriya/CLionProjects/evol/out", ios_base::app);
+    vector<double> distribution (n, 0.0);
+    double sumDist = 0.0;
+
+    for (int i = 1; i <= n; i++) {
+        double cur = pow(i, -BETTA);
+        sumDist += cur;
+    }
+
+    distribution[0] = 1.0 / sumDist;
+
+    for (int i = 1; i < n; i++) {
+        distribution[i] = pow(i + 1 , -BETTA) / sumDist + distribution[i-1];
+        //out << " " << distribution[i] << "  ";
+
+    }
+
+    return distribution;
+}
+
 void run (TypeGraph typeGraph, int size, vector<TypeAlgo> typesAlgo) {
     vector<vector<int>> result = vector<vector<int>> (typesAlgo.size(), vector<int>(REPEAT, 0));
     vector<int> sum = vector<int>(typesAlgo.size(), 0);
@@ -117,6 +141,10 @@ void run (TypeGraph typeGraph, int size, vector<TypeAlgo> typesAlgo) {
         for (int j = 0; j < typesAlgo.size(); j++) {
             if (typesAlgo[j] == RLS) result[j][i] = graph->RLS(1);
             else if (typesAlgo[j] == ONEPLUSONE) result[j][i] = graph->onePlusOneAlgorithm(1);
+            else if (typesAlgo[j] == ONEPLUSONE_POWERLAW) {
+                vector<double> dist = powerLawDistribution(size);
+                result[j][i] = graph->onePlusOneHeavyTailedAlgorithm(1, dist);
+            }
             else if (typesAlgo[j] == LAMBDA) result[j][i] = graph->lambdaAlgorithm(1);
 
             graph->reset();
@@ -134,7 +162,7 @@ void run (TypeGraph typeGraph, int size, vector<TypeAlgo> typesAlgo) {
         average[j] = (double) sum[j] / REPEAT;
     }
 
-    ofstream out("/Users/viktoria/CLionProjects/evol/out", ios_base::app);
+    ofstream out("C:/Users/Viktoriya/CLionProjects/evol/out", ios_base::app);
     out << "результаты:\n";
     out << "размер графа - " << size << '\n';
     out << "тип графа - ";
@@ -154,6 +182,8 @@ void run (TypeGraph typeGraph, int size, vector<TypeAlgo> typesAlgo) {
             out << "RLS\n";
         } else if (typesAlgo[i] == ONEPLUSONE) {
             out << "(1 + 1)\n";
+        } else if (typesAlgo[i] == ONEPLUSONE_POWERLAW) {
+        out << "(1 + 1) Heavy-tailed\n betta = " << BETTA << "\n";
         } else if (typesAlgo[i] == LAMBDA) {
             out << "(1 + (лямбда, лямбда))\n";
         }
@@ -177,12 +207,12 @@ void run (TypeGraph typeGraph, int size, vector<TypeAlgo> typesAlgo) {
 int main() {
     srand(static_cast<unsigned int>(time(0)));
     ofstream out;
-    out.open("/Users/viktoria/CLionProjects/evol/out");
+    out.open("C:/Users/Viktoriya/CLionProjects/evol/out");
     out << "";
 
     vector<int> sizeGraph {2048}; //{32, 64, 128, 256, 512, 1024, 2048}
-    vector<TypeAlgo> typesAlgo = {RLS, ONEPLUSONE, LAMBDA}; //{RLS, ONEPLUSONE, LAMBDA}
-    vector<TypeGraph> typesGraph = {RANDOM};  //{KNN, KN, RANDOM}
+    vector<TypeAlgo> typesAlgo = { LAMBDA }; //{RLS, ONEPLUSONE, ONEPLUSONE_POWERLAW, LAMBDA}
+    vector<TypeGraph> typesGraph = { KN };  //{KNN, KN, RANDOM}
 
 
     for (int i = 0; i < typesGraph.size(); i++) {
